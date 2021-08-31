@@ -1,0 +1,12 @@
+Django~=3.1.2
+PyJWT~=1.7.1
+djangorestframework-jwt~=1.11.0
+djangorestframework~=3.11.1
+django-filter~=2.4.0
+drf-yasg~=1.17.1
+python-decouple==3.3
+django-silk==4.1.0
+psycopg2-binary==2.8.6
+django-cors-headers==3.5.0
+gunicorn==20.0.4
+whitenoise~=5.2.0

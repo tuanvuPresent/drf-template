@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    command: bash -c "gunicorn base_drf.wsgi:application --bind 0.0.0.0:8000"
+    expose:
+      - 8000
+    environment:
+      - SERVER_ENV=beta
+    volumes:
+      - static_volume:/usr/src/app/static
+      - media_volume:/usr/src/app/media
+    depends_on:
+      - postgres
+
+  postgres:
+    image: kartoza/postgis:11.0-2.5
+    restart: always
+    env_file:
+      - .env/.beta
+    ports:
+      - 15436:5432
+    volumes:
+      - ./postgres-data-dev:/var/lib/postgresql/
+
+  nginx:
+    restart: always
+    build: nginx/
+    volumes:
+      - static_volume:/usr/src/app/static
+      - media_volume:/usr/src/app/media
+    ports:
+      - 8123:80
+    depends_on:
+      - web
+
+volumes:
+  static_volume:
+  media_volume:
+
+##remove all docker: sudo docker system prune
+##put file .env === file docker-compose.yml ( .env file include environ variable)
+##run in phpmyadmin
+##ALTER USER 'admin' IDENTIFIED WITH mysql_native_password BY 'admin'

@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8010
+    ports:
+      - 8010:8010
+    restart: always
+    depends_on:
+      - postgres
+    volumes:
+      - .:/usr/src/app
+
+  postgres:
+    image: kartoza/postgis:11.0-2.5
+    restart: always
+    env_file:
+      - .env/.development
+    ports:
+      - 5432:5432
+    volumes:
+      - ./postgres-data-dev:/var/lib/postgresql/
+
+##remove all docker: sudo docker system prune

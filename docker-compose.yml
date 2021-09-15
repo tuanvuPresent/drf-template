@@ -9,8 +9,6 @@ services:
     restart: always
     depends_on:
       - postgres
-    volumes:
-      - .:/usr/src/app
 
   postgres:
     image: kartoza/postgis:11.0-2.5

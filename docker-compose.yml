@@ -2,7 +2,9 @@ version: '3'
 
 services:
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
     command: python manage.py runserver 0.0.0.0:8010
     ports:
       - 8010:8010
@@ -19,5 +21,3 @@ services:
       - 5432:5432
     volumes:
       - ./postgres-data-dev:/var/lib/postgresql/
-
-##remove all docker: sudo docker system prune

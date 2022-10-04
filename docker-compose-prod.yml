@@ -2,7 +2,9 @@ version: '3'
 
 services:
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
     command: bash -c "gunicorn base_drf.wsgi:application --bind 0.0.0.0:8000"
     expose:
       - 8000
@@ -26,7 +28,7 @@ services:
 
   nginx:
     restart: always
-    build: nginx/
+    build: docker/nginx/
     volumes:
       - static_volume:/usr/src/app/static
       - media_volume:/usr/src/app/media
@@ -38,5 +40,3 @@ services:
 volumes:
   static_volume:
   media_volume:
-
-##remove all docker: sudo docker system prune

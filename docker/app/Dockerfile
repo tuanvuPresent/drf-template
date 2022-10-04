@@ -9,13 +9,13 @@ ENV PYTHONUNBUFFERED 1
 # install dependencies
 RUN pip install --upgrade pip
 RUN pip install pipenv
-COPY ./requirements.txt /usr/src/app/
+COPY ../../requirements.txt /usr/src/app/
 RUN pip install -r requirements.txt
 
 # copy project
-COPY . /usr/src/app/
+COPY ../../ /usr/src/app/
 
 # copy entrypoint.sh
-COPY ./entrypoint.sh /usr/src/app/
+COPY ../../entrypoint.sh /usr/src/app/
 # run entrypoint.sh
 ENTRYPOINT ["/usr/src/app/entrypoint.sh"]

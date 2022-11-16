@@ -23,3 +23,13 @@ TIME_ZONE=Asia/Ho_Chi_Minh
 DEBUG=True
 SECRET_KEY=#&dxd7s%%ut)z&+rk4-xnm)p3+6ml&czy0y9cs=%%732$rw!94
 SILK_ENABLE=True
+
+EMAIL_HOST='smtp.gmail.com'
+EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
+EMAIL_PORT=587
+EMAIL_HOST_USER='youremail'
+EMAIL_HOST_PASSWORD='yourpassword'
+EMAIL_USE_TLS=True
+
+CELERY_BROKER_URL="redis://:admin@localhost:6379"
+CACHES_URL='redis://0.0.0.0:6379/2'

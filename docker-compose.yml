@@ -16,7 +16,7 @@ services:
     image: kartoza/postgis:11.0-2.5
     restart: always
     env_file:
-      - .env/.development
+      - .env.example
     ports:
       - 5432:5432
     volumes:

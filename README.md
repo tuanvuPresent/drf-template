@@ -9,7 +9,7 @@ step 1: install docker and docker-compose
 
 step2: create project 
 ```
-django-admin startproject --template=https://github.com/tuanvupresent/base-drf/archive/master.zip --extension=.yml --name=Procfile example_project
+django-admin startproject --template=https://github.com/tuanvupresent/drf-template/archive/master.zip --extension=.yml --name=Procfile example_project
 ```
 
 step 3: Build code with docker compose

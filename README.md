@@ -7,13 +7,16 @@ step 1: install docker and docker-compose
 - [https://docs.docker.com/compose/install/](https://docs.docker.com/compose/install/)
 - [https://docs.docker.com/engine/install/ubuntu/](https://docs.docker.com/engine/install/ubuntu/)
 
-step 2: Build code with docker compose
+step2: create project 
+```
+django-admin startproject --template=https://github.com/tuanvupresent/base-drf/archive/master.zip example_project
+```
+
+step 3: Build code with docker compose
 ```
 - docker-compose build
 - docker-compose up -d
 ```
-
-step 3: Create folder logs tại root project
 
 step 4: Run
 ```

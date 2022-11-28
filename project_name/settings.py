@@ -6,14 +6,11 @@ from decouple import Config, RepositoryEnv, config
 # CORE SETTINGS
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SERVER_ENV = os.environ.get('SERVER_ENV', 'dev')
-if SERVER_ENV == 'prod':
-    ENV_FILE = os.path.join(BASE_DIR, '.env/.production')
+if SERVER_ENV == 'dev':
+    ENV_FILE = os.path.join(BASE_DIR, '.env.example')
     env_config = Config(RepositoryEnv(ENV_FILE))
-elif SERVER_ENV == 'heroku-prod':
-    env_config = config
 else:
-    ENV_FILE = os.path.join(BASE_DIR, '.env/.development')
-    env_config = Config(RepositoryEnv(ENV_FILE))
+    env_config = config
 
 SECRET_KEY = env_config('SECRET_KEY')
 DEBUG = env_config("DEBUG", cast=bool)
@@ -59,7 +56,8 @@ if SILK_ENABLE:
         'silk.middleware.SilkyMiddleware',
     ]
 
-ROOT_URLCONF = 'base_drf.urls'
+ROOT_URLCONF = '{{ project_name }}.urls'
+WSGI_APPLICATION = '{{ project_name }}.wsgi.application'
 AUTH_USER_MODEL = 'user.User'
 
 # CORS SETTINGS
@@ -84,8 +82,6 @@ TEMPLATES = [
         },
     },
 ]
-
-WSGI_APPLICATION = 'base_drf.wsgi.application'
 
 # DATABASE SETTINGS
 if env_config('DATABASES_NAME', 'None').lower() == 'postgres':

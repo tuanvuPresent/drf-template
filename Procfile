@@ -1,2 +1,2 @@
 release: python manage.py migrate
-web: gunicorn base_drf.wsgi:application
+web: gunicorn {{ project_name }}.wsgi:application

@@ -10,5 +10,8 @@ psycopg2-binary==2.8.6
 django-cors-headers==3.5.0
 gunicorn==20.0.4
 whitenoise~=5.2.0
-redis==4.2.2
 django-redis==5.2.0
+celery==4.4.7
+redis==3.5.3
+django_celery_beat==2.0.0
+django_celery_results==1.2.1

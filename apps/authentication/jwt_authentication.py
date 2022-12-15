@@ -4,8 +4,8 @@ from rest_framework.exceptions import AuthenticationFailed, NotAuthenticated
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework_jwt.settings import api_settings
 
-from apps.authentication.utils import jwt_decode_handler
-from apps.user.models import User, Token
+from apps.authentication.utils import jwt_decode_handler, jwt_get_orig_iat, jwt_get_user_id
+from apps.user.models import Token
 
 
 class JWTAuthentication(JSONWebTokenAuthentication):
@@ -56,10 +56,11 @@ class JWTAuthentication(JSONWebTokenAuthentication):
 
         try:
             token = Token.objects.select_related('user').get(
-                user_id=payload.get('user_id'),
-                token=payload.get('orig_iat')
+                user_id=jwt_get_user_id(payload),
+                token=jwt_get_orig_iat(payload)
             )
         except Token.DoesNotExist:
-            raise AuthenticationFailed('No user matching this token was found.')
+            raise AuthenticationFailed(
+                'No user matching this token was found.')
 
         return token.user, token

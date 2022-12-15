@@ -2,10 +2,10 @@ from django.conf.urls import url
 from django.urls import include
 from rest_framework import routers
 
-from apps.user.versions.v1.views import user_view
+from apps.user.v1 import views
 
 router = routers.DefaultRouter()
-router.register('v1/users', user_view.UserAPIView, basename='user')
+router.register('v1/users', views.UserAPIView, basename='user')
 
 urlpatterns = [
     url('', include(router.urls)),

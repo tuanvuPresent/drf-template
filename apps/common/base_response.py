@@ -1,4 +1,4 @@
-class CustomResponse:
+class BaseResponse:
 
     def __init__(self, status=True, code=0, message=None, data=None):
         self.status = status

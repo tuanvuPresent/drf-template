@@ -3,8 +3,8 @@ from rest_framework import serializers
 
 from apps.common.constant import ErrorCode
 from apps.common.custom_exception_handler import CustomAPIException
-from apps.user.models import User
-
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 class JWTLoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=64, required=True)

@@ -6,7 +6,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework_jwt.settings import api_settings
 
-from apps.authentication.serializer import JWTLoginSerializer, UserAccountSerializer
+from apps.authentication.v1.serializer import JWTLoginSerializer, UserAccountSerializer
 from apps.authentication.utils import jwt_payload_handler, jwt_encode_handler
 from apps.common.custom_model_view_set import BaseGenericViewSet
 from apps.user.models import Token

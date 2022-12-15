@@ -50,8 +50,6 @@ urlpatterns = [
         cache_timeout=0), name='schema-redoc'),
 
     url('admin/', admin.site.urls),
-    # url('api/', include('apps.authentication.urls')),
-    # url('api/', include('apps.user.urls')),
     url('api/', include('apps.urls')),
 ]
 if settings.SILK_ENABLE:

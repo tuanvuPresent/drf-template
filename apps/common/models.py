@@ -7,7 +7,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.timezone import now
-
+from apps.common.snowflake import UuidGenSingletonGroup
 from apps.common.middleware import get_current_user
 from django.contrib.auth.models import AnonymousUser
 
@@ -45,7 +45,20 @@ class BaseModel(models.Model):
         else:
             if user != AnonymousUser():
                 self.updated_by = get_current_user()
-        super(BaseModel, self).save(force_insert, force_update, using, update_fields)
+        super(BaseModel, self).save(force_insert,
+                                    force_update, using, update_fields)
+
+    class Meta:
+        abstract = True
+
+
+class UuidModel(models.Model):
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        if not self.id:
+            self.id = UuidGenSingletonGroup(self.__class__).gen()
+        super().save(force_insert, force_update, using, update_fields)
 
     class Meta:
         abstract = True

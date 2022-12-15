@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import exception_handler
 
 from apps.common.constant import ErrorCode, Error
-from apps.common.custom_response import CustomResponse
+from apps.common.base_response import BaseResponse
 
 
 def custom_exception_handler(exc, context):
@@ -43,7 +43,7 @@ def custom_exception_handler(exc, context):
 
         logger.error(exc)
     return Response(
-        data=CustomResponse(
+        data=BaseResponse(
             status=False,
             code=error[Error.code],
             message=error[Error.message],

@@ -26,3 +26,11 @@ def jwt_payload_handler(user, time_token):
         'exp': datetime.utcnow() + api_settings.JWT_EXPIRATION_DELTA,
         'orig_iat': time_token
     }
+
+
+def jwt_get_user_id(payload):
+    return payload.get('user_id')
+
+
+def jwt_get_orig_iat(payload):
+    return payload.get('orig_iat')

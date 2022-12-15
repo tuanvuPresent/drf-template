@@ -6,7 +6,7 @@ from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.viewsets import GenericViewSet
 
 from apps.authentication.jwt_authentication import JWTAuthentication
-from apps.common.custom_response import CustomResponse
+from apps.common.base_response import BaseResponse
 from apps.common.serializer import NoneSerializer
 
 
@@ -41,7 +41,7 @@ class BaseGenericViewSet(GenericViewSet):
 
     def finalize_response(self, request, response, *args, **kwargs):
         if not response.exception:
-            response.data = CustomResponse(data=response.data).data
+            response.data = BaseResponse(data=response.data).data
 
         return super().finalize_response(request, response, args, kwargs)
 

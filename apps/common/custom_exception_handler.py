@@ -4,7 +4,7 @@ from rest_framework.exceptions import APIException, ErrorDetail
 from rest_framework.response import Response
 from rest_framework.views import exception_handler
 
-from apps.common.constant import ErrorCode, Error
+from apps.common.constant import ErrorMessage
 from apps.common.base_response import BaseResponse
 
 
@@ -16,37 +16,37 @@ def custom_exception_handler(exc, context):
         status_code = response.status_code
         detail = None
         if exc_class == 'ValidationError':
-            error = ErrorCode.UNKNOWN_ERROR
+            error = ErrorMessage.UNKNOWN_ERROR
             detail = get_full_errors_messages(response.data)
         elif exc_class == "CustomAPIException":
             error = exc.detail
         elif exc_class == "AuthenticationFailed":
-            error = ErrorCode.INVALID_AUTH
+            error = ErrorMessage.INVALID_AUTH
         elif exc_class == "NotAuthenticated":
-            error = ErrorCode.NOT_AUTH
+            error = ErrorMessage.NOT_AUTH
         elif exc_class == "PermissionDenied":
-            error = ErrorCode.NOT_PERMISSION
+            error = ErrorMessage.NOT_PERMISSION
         elif exc_class == "Throttled":
-            error = ErrorCode.THROTTLED_REQUEST
+            error = ErrorMessage.THROTTLED_REQUEST
         elif exc_class == "Http404":
-            error = ErrorCode.NOT_FOUND
+            error = ErrorMessage.NOT_FOUND
         elif exc_class == "MethodNotAllowed":
-            error = ErrorCode.NOT_ALLOW_METHOD
+            error = ErrorMessage.NOT_ALLOW_METHOD
         else:
-            error = ErrorCode.UNKNOWN_ERROR
+            error = ErrorMessage.UNKNOWN_ERROR
             detail = str(exc)
 
     else:
         detail = str(exc)
-        error = ErrorCode.UNKNOWN_ERROR
+        error = ErrorMessage.UNKNOWN_ERROR
         status_code = 500
 
         logger.error(exc)
     return Response(
         data=BaseResponse(
             status=False,
-            code=error[Error.code],
-            message=error[Error.message],
+            code=error.code,
+            message=error.message,
             data=detail).data,
         status=status_code
     )
@@ -103,8 +103,6 @@ def get_full_errors_messages(detail):
 class CustomAPIException(APIException):
     status_code = 400
 
-    def __init__(self, messenger=None, code=None):
+    def __init__(self, message=None, code=None):
         self.code = code
-        if code is not None and code > 300:
-            self.status_code = code
-        super().__init__(detail=messenger, code=code)
+        self.detail = message

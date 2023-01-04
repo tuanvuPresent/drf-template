@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 
-from apps.common.constant import ErrorCode
+from apps.common.constant import ErrorMessage
 from apps.common.custom_exception_handler import CustomAPIException
 from django.contrib.auth import get_user_model
 User = get_user_model()
@@ -20,7 +20,7 @@ class JWTLoginSerializer(serializers.Serializer):
 
         user = authenticate(username=username, password=password)
         if not user:
-            raise CustomAPIException(ErrorCode.LOGIN_FAIL)
+            raise CustomAPIException(ErrorMessage.LOGIN_FAIL)
         return user
 
 

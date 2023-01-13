@@ -3,11 +3,14 @@ from rest_framework.authentication import get_authorization_header
 from rest_framework.exceptions import AuthenticationFailed, NotAuthenticated
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework_jwt.settings import api_settings
-
-from apps.authentication.utils import jwt_decode_handler, jwt_get_orig_iat, jwt_get_user_id
+from django.conf import settings
 from apps.user.models import Token
+from apps.authentication.cache import UserActivityStore
+from apps.authentication.utils import JwtTokenGenerator
+from django.contrib.auth import get_user_model
+from apps.authentication.utils import JwtTokenGenerator
 
-
+User = get_user_model()
 class JWTAuthentication(JSONWebTokenAuthentication):
     keyword = api_settings.JWT_AUTH_HEADER_PREFIX
 
@@ -46,7 +49,8 @@ class JWTAuthentication(JSONWebTokenAuthentication):
 
     def authenticate_credentials(self, token):
         try:
-            payload = jwt_decode_handler(token)
+            token_generator = JwtTokenGenerator()
+            payload = token_generator.verify_token(token)
         except ExpiredSignatureError:
             raise AuthenticationFailed('Token Expired!')
         except DecodeError:
@@ -54,13 +58,24 @@ class JWTAuthentication(JSONWebTokenAuthentication):
         except Exception:
             raise AuthenticationFailed('Invalid token.')
 
+        user = self.get_stateless_user(token_generator)
+        if self.is_revoked(user):
+            raise AuthenticationFailed('Invalid token.')
+
+        return user, token
+
+    def get_user(self, token_generator):
         try:
-            token = Token.objects.select_related('user').get(
-                user_id=jwt_get_user_id(payload),
-                token=jwt_get_orig_iat(payload)
-            )
-        except Token.DoesNotExist:
+            return User.objects.get(pk=token_generator.user_id)
+        except User.DoesNotExist:
             raise AuthenticationFailed(
                 'No user matching this token was found.')
 
-        return token.user, token
+    def get_stateless_user(self, token_generator):
+        user = User(id=token_generator.user_id,
+                    username=token_generator.username)
+        user.sid = token_generator.jti
+        return user
+
+    def is_revoked(self, user):
+        return UserActivityStore(user).is_logout()

@@ -48,3 +48,6 @@ class UuidGenSingletonGroup:
 
     def __next__(self):
         return next(self.uuid)
+    
+    def gen(self):
+        return next(self.uuid)

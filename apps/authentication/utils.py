@@ -1,36 +1,57 @@
 from datetime import datetime
-
+import uuid
 import jwt
 from rest_framework_jwt.settings import api_settings
 
 
-def jwt_encode_handler(payload):
-    return jwt.encode(
-        payload,
-        api_settings.JWT_SECRET_KEY,
-        api_settings.JWT_ALGORITHM
-    ).decode('utf-8')
+class JwtTokenGenerator:
 
+    def get_token(self, user):
+        payload = self.set_payload(user)
+        return jwt.encode(
+            payload,
+            self.secret_key,
+            api_settings.JWT_ALGORITHM
+        ).decode('utf-8')
 
-def jwt_decode_handler(token):
-    return jwt.decode(
-        token,
-        api_settings.JWT_SECRET_KEY,
-        algorithms=[api_settings.JWT_ALGORITHM]
-    )
+    def verify_token(self, token):
+        self.payload = jwt.decode(
+            token,
+            self.secret_key,
+            algorithms=[api_settings.JWT_ALGORITHM]
+        )
+        return self.payload
 
+    def set_payload(self, user):
+        self.payload = {
+            'user_id':  user.pk,
+            'username': user.username,
+            'exp': datetime.utcnow() + api_settings.JWT_EXPIRATION_DELTA,
+            'jti': str(uuid.uuid4()),
+            'iat': datetime.now().timestamp()
+        }
+        return self.payload
 
-def jwt_payload_handler(user, time_token):
-    return {
-        'user_id': user.pk,
-        'exp': datetime.utcnow() + api_settings.JWT_EXPIRATION_DELTA,
-        'orig_iat': time_token
-    }
+    @property
+    def secret_key(self):
+        return str(api_settings.JWT_SECRET_KEY)
 
+    @property
+    def user_id(self):
+        return self.payload.get('user_id')
 
-def jwt_get_user_id(payload):
-    return payload.get('user_id')
+    @property
+    def username(self):
+        return self.payload.get('username')
 
+    @property
+    def exp(self):
+        return self.payload.get('exp')
 
-def jwt_get_orig_iat(payload):
-    return payload.get('orig_iat')
+    @property
+    def jti(self):
+        return self.payload.get('jti')
+
+    @property
+    def iat(self):
+        return self.payload.get('iat')

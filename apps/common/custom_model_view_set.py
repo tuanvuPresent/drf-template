@@ -13,7 +13,6 @@ from apps.common.serializer import NoneSerializer
 class BaseGenericViewSet(GenericViewSet):
     authentication_classes = [JWTAuthentication]
     permission_action_classes = {}
-    serializer_method_classes = None
     serializer_action_classes = None
     serializer_class = NoneSerializer
 
@@ -30,12 +29,7 @@ class BaseGenericViewSet(GenericViewSet):
 
     def get_serializer_class(self):
         try:
-            if self.serializer_method_classes is not None:
-                return self.serializer_method_classes[self.request.method]
-            if self.serializer_action_classes is not None:
-                return self.serializer_action_classes[self.action]
-
-            return self.serializer_class
+            return self.serializer_action_classes[self.action]
         except (KeyError, AttributeError):
             return super().get_serializer_class()
 

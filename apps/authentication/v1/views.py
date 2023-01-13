@@ -7,9 +7,8 @@ from rest_framework.response import Response
 from rest_framework_jwt.settings import api_settings
 
 from apps.authentication.v1.serializer import JWTLoginSerializer, UserAccountSerializer
-from apps.authentication.utils import jwt_payload_handler, jwt_encode_handler
 from apps.common.custom_model_view_set import BaseGenericViewSet
-from apps.user.models import Token
+from apps.authentication.signals import user_login, user_logout
 
 
 class JWTAuthAPIView(BaseGenericViewSet):
@@ -17,11 +16,11 @@ class JWTAuthAPIView(BaseGenericViewSet):
         'login': JWTLoginSerializer,
     }
 
-    @action(methods=['get'], detail=False)
+    @action(methods=['post'], detail=False)
     def logout(self, request):
-        Token.objects.filter(user=request.user, token=request.auth.token).delete()
         response = Response(data=None)
         response.delete_cookie(api_settings.JWT_AUTH_COOKIE)
+        user_logout.send(sender=request.user.__class__, user=request.user)
         return response
 
     @swagger_auto_schema(request_body=JWTLoginSerializer)
@@ -29,12 +28,9 @@ class JWTAuthAPIView(BaseGenericViewSet):
     def login(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data
+        user = serializer.validated_data.get('user')
+        token = serializer.validated_data.get('token')
 
-        time_token = datetime.utcnow().timestamp()
-        Token.objects.create(user=user, token=time_token)
-        payload = jwt_payload_handler(user, time_token)
-        token = jwt_encode_handler(payload)
         data = {
             'token': token,
             'user': UserAccountSerializer(user).data
@@ -46,4 +42,6 @@ class JWTAuthAPIView(BaseGenericViewSet):
                                 token,
                                 expires=expiration,
                                 httponly=True)
+
+        user_login.send(sender=request.user.__class__, user=user)
         return response

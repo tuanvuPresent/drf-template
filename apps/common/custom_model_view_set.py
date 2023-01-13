@@ -13,7 +13,7 @@ from apps.common.serializer import NoneSerializer
 class BaseGenericViewSet(GenericViewSet):
     authentication_classes = [JWTAuthentication]
     permission_action_classes = {}
-    serializer_action_classes = None
+    serializer_action_classes = {}
     serializer_class = NoneSerializer
 
     filter_backends = [DjangoFilterBackend]

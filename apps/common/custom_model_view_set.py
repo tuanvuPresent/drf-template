@@ -34,10 +34,10 @@ class BaseGenericViewSet(GenericViewSet):
             return super().get_serializer_class()
 
     def finalize_response(self, request, response, *args, **kwargs):
-        if not response.exception:
+        response = super().finalize_response(request, response, args, kwargs)
+        if not response.exception and isinstance(response, Response):
             response.data = BaseResponse(data=response.data).data
-
-        return super().finalize_response(request, response, args, kwargs)
+        return response
 
 
 class BaseModelViewSet(BaseGenericViewSet,

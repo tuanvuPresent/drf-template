@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: docker/app/Dockerfile
-    command: bash -c "gunicorn {{ project_name }}.wsgi:application --bind 0.0.0.0:8000"
+    command: bash -c "gunicorn config.wsgi:application --bind 0.0.0.0:8000"
     expose:
       - 8000
     environment:
@@ -51,14 +51,14 @@ services:
     build:
       context: .
       dockerfile: docker/app/Dockerfile
-    command: celery -A {{ project_name }} worker -l info
+    command: celery -A config worker -l info
 
   celery-beat:
     restart: always
     build:
       context: .
       dockerfile: docker/app/Dockerfile
-    command: celery -A {{ project_name }} beat -l info -S django
+    command: celery -A config beat -l info -S django
 
 volumes:
   static_volume:

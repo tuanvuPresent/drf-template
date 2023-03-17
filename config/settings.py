@@ -58,10 +58,10 @@ if SILK_ENABLE:
         'silk.middleware.SilkyMiddleware',
     ]
 
-ROOT_URLCONF = '{{ project_name }}.urls'
-WSGI_APPLICATION = '{{ project_name }}.wsgi.application'
+ROOT_URLCONF = 'config.urls'
+WSGI_APPLICATION = 'config.wsgi.application'
 AUTH_USER_MODEL = 'user.User'
-
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # CORS SETTINGS
 CORS_ALLOWED_ORIGINS = [
     'http://localhost',
@@ -71,8 +71,7 @@ CORS_ALLOWED_ORIGINS = [
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')]
-        ,
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -116,7 +115,7 @@ else:
         }
     }
 
-# AUTH_PASSWORD_VALIDATORS 
+# AUTH_PASSWORD_VALIDATORS
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',

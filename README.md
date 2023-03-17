@@ -1,57 +1,60 @@
 # django-framework-python
+
 - [https://www.django-rest-framework.org/](https://www.django-rest-framework.org/)
 - [https://docs.djangoproject.com/en/3.0/](https://docs.djangoproject.com/en/3.0/)
-# start project 
-step 1: install docker and docker-compose
 
-- [https://docs.docker.com/compose/install/](https://docs.docker.com/compose/install/)
-- [https://docs.docker.com/engine/install/ubuntu/](https://docs.docker.com/engine/install/ubuntu/)
+## Usage
 
-step2: create project 
-- Core template
-```
-django-admin startproject --template=https://github.com/tuanvupresent/drf-template/archive/master.zip --extension=.yml --name=Procfile example_project
-```
-- Celery template
-```
-django-admin startproject --template=https://github.com/tuanvupresent/drf-template/archive/temp/celery.zip --extension=.yml --name=Procfile example_project
-```
+### Dependencies
 
-step 3: Build code with docker compose
-```
-- docker-compose build
-- docker-compose up -d
-```
+- Install docker and docker-compose
 
-step 4: Run
-```
-- run server 0.0.0.0:8010
-```
+> [https://docs.docker.com/compose/install/](https://docs.docker.com/compose/install/)
 
-# for development 
+> [https://docs.docker.com/engine/install/ubuntu/](https://docs.docker.com/engine/install/ubuntu/)
+
+### For development
+
 step 1: install requirements
+
 ```
 - python3 -m venv env
 - source env/bin/activate 
 - pip install -r requirements.txt 
 ```
+
 step 2: Run
+
 ```
-- python manage.py runserver 0.0.0.0:8001
-- run server at 0.0.0.0:8001
+python manage.py runserver 0.0.0.0:8001
 ```
 
-# for production 
+### For docker
+
+step 1: Build code with docker compose
+
+```
+- docker-compose build
+- docker-compose up -d
+```
+
+> Run: http://0.0.0.0:8010/
+
+### For production
+
 ```
 - docker-compose -f docker-compose.prod.yml build
 - docker-compose -f docker-compose.prod.yml up -d
 ```
-- run server 0.0.0.0:8123
+
+> Run: http://0.0.0.0:8123/
 
 ---
-# setup celery
+
+## setup celery
 
 `1. celery.py`
+
 ```python
 # django_celery/celery.py
 
@@ -72,7 +75,9 @@ app.conf.beat_schedule = {
 }
 
 ```
+
 `2. setings.py`
+
 ```python
 INSTALLED_APPS = [
     'django_celery_beat',
@@ -84,14 +89,18 @@ INSTALLED_APPS = [
 CELERY_BROKER_URL = "redis://localhost:6379"
 CELERY_RESULT_BACKEND = "redis://localhost:6379"
 ```
+
 `3. __init__.py`
+
 ```python
 # django_celery/__init__.py
 from .celery import app as celery_app
+
 __all__ = ("celery_app",)
 ```
 
 `4. requrements.txt`
+
 ```text
 celery==4.4.7
 redis==3.5.3

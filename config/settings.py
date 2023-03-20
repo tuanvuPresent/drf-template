@@ -45,7 +45,7 @@ MIDDLEWARE = [
 
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'apps.common.middleware.CurrentUserMiddleware',
+    'apps.core.middleware.CurrentUserMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
@@ -148,7 +148,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # REST_FRAMEWORK SETTINGS
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER':
-        'apps.common.custom_exception_handler.custom_exception_handler',
+        'apps.core.exception_handler.custom_exception_handler',
     'DEFAULT_AUTHENTICATION_CLASSES': [
     ],
     'DEFAULT_THROTTLE_CLASSES': [
@@ -220,7 +220,7 @@ LOGGING = {
 # AUTHENTICATION BACKENDS SETTINGS
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-    'apps.common.authentication_backend.SettingsBackend',
+    'apps.core.authentication_backend.SettingsBackend',
 ]
 
 # EMAIL SETTINGS

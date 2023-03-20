@@ -1,5 +1,5 @@
 from django.db import models
-from apps.common.models import UuidModel
+from apps.core.models import UuidModel
 from django.conf import settings
 
 

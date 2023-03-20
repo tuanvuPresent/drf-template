@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework_jwt.settings import api_settings
 
 from apps.authentication.v1.serializer import JWTLoginSerializer, UserAccountSerializer
-from apps.common.custom_model_view_set import BaseGenericViewSet
+from apps.core.model_view_set import BaseGenericViewSet
 from apps.authentication.signals import user_login, user_logout
 
 
@@ -37,7 +37,8 @@ class JWTAuthAPIView(BaseGenericViewSet):
         }
         response = Response(data=data)
         if api_settings.JWT_AUTH_COOKIE:
-            expiration = (datetime.utcnow() + api_settings.JWT_EXPIRATION_DELTA)
+            expiration = (datetime.utcnow() +
+                          api_settings.JWT_EXPIRATION_DELTA)
             response.set_cookie(api_settings.JWT_AUTH_COOKIE,
                                 token,
                                 expires=expiration,

@@ -6,7 +6,4 @@ from apps.user.v1 import views
 
 router = routers.DefaultRouter()
 router.register('v1/users', views.UserAPIView, basename='user')
-
-urlpatterns = [
-    url('', include(router.urls)),
-]
+urlpatterns = router.urls

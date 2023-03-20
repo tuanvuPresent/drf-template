@@ -7,8 +7,8 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.timezone import now
-from apps.common.snowflake import UuidGenSingletonGroup
-from apps.common.middleware import get_current_user
+from apps.core.snowflake import UuidGenSingletonGroup
+from apps.core.middleware import get_current_user
 from django.contrib.auth.models import AnonymousUser
 
 

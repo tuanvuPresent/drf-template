@@ -4,8 +4,8 @@ from rest_framework.exceptions import APIException, ErrorDetail
 from rest_framework.response import Response
 from rest_framework.views import exception_handler
 
-from apps.common.constant import ErrorMessage
-from apps.common.base_response import BaseResponse
+from apps.core.constant import ErrorMessage
+from apps.core.base_response import BaseResponse
 
 
 def custom_exception_handler(exc, context):

@@ -42,9 +42,8 @@ class BaseModel(models.Model):
         if self.created_at is None:
             if user != AnonymousUser():
                 self.created_by = get_current_user()
-        else:
-            if user != AnonymousUser():
-                self.updated_by = get_current_user()
+        elif user != AnonymousUser():
+            self.updated_by = get_current_user()
         super(BaseModel, self).save(force_insert,
                                     force_update, using, update_fields)
 
@@ -74,7 +73,7 @@ def log_addition(object):
             action_flag=ADDITION,
             change_message='add',
         )
-    except:
+    except Exception:
         pass
 
 
@@ -88,7 +87,7 @@ def log_change(object):
             action_flag=CHANGE,
             change_message='update',
         )
-    except:
+    except Exception:
         pass
 
 
@@ -101,7 +100,7 @@ def log_deletion(objects):
             object_repr=str(objects),
             action_flag=DELETION,
         )
-    except:
+    except Exception:
         pass
 
 

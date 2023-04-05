@@ -25,5 +25,4 @@ class UserAPIView(BaseModelViewSet):
     allow_action_name = ['list']
 
     def get_queryset(self):
-        queryset = User.objects.filter(is_active=True)
-        return queryset
+        return User.objects.filter(is_active=True)

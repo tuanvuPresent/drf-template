@@ -31,4 +31,4 @@ class Token(models.Model):
         db_table = 'authentication_token'
 
     def __str__(self):
-        return "{} - {} - {}".format(self.id, self.user_id, self.token)
+        return f"{self.id} - {self.user_id} - {self.token}"

@@ -3,7 +3,7 @@ import logging
 from rest_framework.exceptions import APIException, ErrorDetail
 from rest_framework.response import Response
 from rest_framework.views import exception_handler
-
+from sentry_sdk import capture_exception
 from apps.core.constant import ErrorMessage
 from apps.core.base_response import BaseResponse
 
@@ -42,6 +42,7 @@ def custom_exception_handler(exc, context):
         status_code = 500
 
         logger.error(exc)
+        capture_exception(exc)
     return Response(
         data=BaseResponse(
             status=False,

@@ -2,6 +2,8 @@ import datetime
 import os
 from pathlib import Path
 from decouple import Config, RepositoryEnv, config
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 # CORE SETTINGS
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -263,3 +265,11 @@ if SERVER_ENV != 'dev':
     SESSION_COOKIE_SECURE = True
     X_FRAME_OPTIONS = 'DENY'
     CSRF_COOKIE_SECURE = True
+
+
+if os.environ.get('SENTRY_DSN'):
+    sentry_sdk.init(
+        dsn=os.environ.get("SENTRY_DSN"),
+        integrations=[DjangoIntegration()],
+        traces_sample_rate=0.1,
+    )

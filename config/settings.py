@@ -1,23 +1,19 @@
 import datetime
 import os
-from pathlib import Path
 from decouple import Config, RepositoryEnv, config
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
+from mongoengine import connect
 
-# CORE SETTINGS
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# config get env (options)
 SERVER_ENV = os.environ.get('SERVER_ENV', 'dev')
-if SERVER_ENV == 'dev':
-    ENV_FILE = os.path.join(BASE_DIR, '.env.example')
-    env_config = Config(RepositoryEnv(ENV_FILE))
-else:
-    env_config = config
+env_config = config
 
-SECRET_KEY = env_config('SECRET_KEY')
-DEBUG = env_config("DEBUG", cast=bool)
-ALLOWED_HOSTS = ['*']
-
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SECRET_KEY = env_config('SECRET_KEY')  # take in env
+DEBUG = env_config("DEBUG", cast=bool) # take in env
+ALLOWED_HOSTS = ['*']                  # update ALLOWED_HOSTS
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -25,12 +21,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    'apps.user',
+    # add my apps 
+    'apps.user',                       
     'apps.authentication',
-
+    # add libs
     'drf_yasg',
-    'corsheaders',
     'rest_framework',
     'django_celery_beat',
     'django_celery_results',
@@ -44,32 +39,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'apps.core.middleware.CurrentUserMiddleware',
+    # add middleware (options)
+    'apps.core.middleware.CurrentUserMiddleware',          
     'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
-SILK_ENABLE = env_config("SILK_ENABLE", cast=bool)
-if SILK_ENABLE:
-    INSTALLED_APPS += [
-        'silk',
-    ]
-    MIDDLEWARE += [
-        'silk.middleware.SilkyMiddleware',
-    ]
-
 ROOT_URLCONF = 'config.urls'
-WSGI_APPLICATION = 'config.wsgi.application'
-AUTH_USER_MODEL = 'user.User'
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-# CORS SETTINGS
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost',
-]
 
-# TEMPLATES SETTINGS
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -85,6 +61,8 @@ TEMPLATES = [
         },
     },
 ]
+
+WSGI_APPLICATION = 'config.wsgi.application'
 
 # DATABASE SETTINGS
 if env_config('DATABASES_NAME', 'None').lower() == 'postgres':
@@ -117,7 +95,6 @@ else:
         }
     }
 
-# AUTH_PASSWORD_VALIDATORS
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -134,8 +111,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # I18N SETTINGS
-LANGUAGE_CODE = env_config('LANGUAGE_CODE')
-TIME_ZONE = env_config('TIME_ZONE')
+LANGUAGE_CODE = env_config('LANGUAGE_CODE')   # take in env (options)
+TIME_ZONE = env_config('TIME_ZONE')           # take in env (options)
 USE_I18N = True
 USE_L10N = False
 USE_TZ = True
@@ -146,6 +123,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # REST_FRAMEWORK SETTINGS
 REST_FRAMEWORK = {
@@ -160,6 +138,23 @@ REST_FRAMEWORK = {
         'user': '60/min',
     }
 }
+AUTH_USER_MODEL = 'user.User'        # custom users model
+# SILK SETTINGS
+SILK_ENABLE = env_config("SILK_ENABLE", cast=bool)
+if SILK_ENABLE:
+    INSTALLED_APPS += [
+        'silk',
+    ]
+    MIDDLEWARE += [
+        'silk.middleware.SilkyMiddleware',
+    ]
+
+# CORS SETTINGS
+MIDDLEWARE += ['corsheaders.middleware.CorsMiddleware']
+INSTALLED_APPS += ['corsheaders']
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost',
+]
 
 # SWAGGER_SETTINGS
 SWAGGER_SETTINGS = {
@@ -189,36 +184,6 @@ JWT_AUTH = {
     'JWT_AUTH_COOKIE': 'JWT',
 }
 
-# LOGGING SETTINGS
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {process:d} {thread:d}: {message}',
-            'style': '{',
-        },
-        'simple': {
-            'format': '{levelname} {message}',
-            'style': '{',
-        },
-    },
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': 'debug.log',
-            'formatter': 'verbose'
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'propagate': True,
-        },
-    }
-}
-
 # AUTHENTICATION BACKENDS SETTINGS
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -241,6 +206,7 @@ CELERY_RESULT_BACKEND = env_config('CELERY_BROKER_URL')
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+CELERY_WORKER_CONCURRENCY = 4
 
 # CACHES SETTINGS
 if env_config('CACHE_DRIVER') == 'redis':
@@ -267,9 +233,14 @@ if SERVER_ENV != 'dev':
     CSRF_COOKIE_SECURE = True
 
 
+# SENTRY SETTINGS
 if os.environ.get('SENTRY_DSN'):
     sentry_sdk.init(
         dsn=os.environ.get("SENTRY_DSN"),
         integrations=[DjangoIntegration()],
         traces_sample_rate=0.1,
     )
+
+# CONNECT MONGODB
+if os.environ.get("DATABASE_MONGO_URI"):
+    connect(host=os.environ.get("DATABASE_MONGO_URI"))

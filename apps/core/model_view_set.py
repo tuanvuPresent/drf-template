@@ -6,6 +6,7 @@ from rest_framework import mixins
 from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.viewsets import GenericViewSet
+from rest_framework.response import Response
 
 
 class BaseGenericViewSet(GenericViewSet):

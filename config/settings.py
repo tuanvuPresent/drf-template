@@ -1,6 +1,5 @@
 import datetime
 import os
-from pathlib import Path
 from decouple import Config, RepositoryEnv, config
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration

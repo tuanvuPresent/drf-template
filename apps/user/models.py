@@ -19,16 +19,4 @@ class User(AbstractUser):
     REQUIRED_FIELDS = ['username']
 
     class Meta:
-        db_table = 'authentication_user'
-
-
-class Token(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    token = models.CharField(max_length=255)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        db_table = 'authentication_token'
-
-    def __str__(self):
-        return f"{self.id} - {self.user_id} - {self.token}"
+        db_table = 'auth_user'

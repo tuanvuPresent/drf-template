@@ -12,3 +12,4 @@ static/
 **/celerybeat-schedule
 **/celerybeat.pid
 **/postgres-data-dev
+.env

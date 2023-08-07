@@ -7,11 +7,7 @@ from sentry_sdk.integrations.django import DjangoIntegration
 # CORE SETTINGS
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SERVER_ENV = os.environ.get('SERVER_ENV', 'dev')
-if SERVER_ENV == 'dev':
-    ENV_FILE = os.path.join(BASE_DIR, '.env.example')
-    env_config = Config(RepositoryEnv(ENV_FILE))
-else:
-    env_config = config
+env_config = config
 
 SECRET_KEY = env_config('SECRET_KEY')
 DEBUG = env_config("DEBUG", cast=bool)
@@ -188,36 +184,6 @@ JWT_AUTH = {
     'JWT_AUTH_COOKIE': 'JWT',
 }
 
-# LOGGING SETTINGS
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {process:d} {thread:d}: {message}',
-            'style': '{',
-        },
-        'simple': {
-            'format': '{levelname} {message}',
-            'style': '{',
-        },
-    },
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': 'debug.log',
-            'formatter': 'verbose'
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'propagate': True,
-        },
-    }
-}
-
 # AUTHENTICATION BACKENDS SETTINGS
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -240,6 +206,7 @@ CELERY_RESULT_BACKEND = env_config('CELERY_BROKER_URL')
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+CELERY_WORKER_CONCURRENCY = 4
 
 # CACHES SETTINGS
 if env_config('CACHE_DRIVER') == 'redis':
@@ -272,3 +239,7 @@ if os.environ.get('SENTRY_DSN'):
         integrations=[DjangoIntegration()],
         traces_sample_rate=0.1,
     )
+
+# connect mongodb
+if os.environ.get("DATABASE_MONGO_URI"):
+    connect(host=os.environ.get("DATABASE_MONGO_URI"))

@@ -7,7 +7,7 @@ ENV PYTHONUNBUFFERED 1
 
 RUN pip install --upgrade pip  \
     && pip install pipenv
-RUN apt update && apt install -y gcc default-libmysqlclient-dev
+RUN apt update && apt install -y gcc libmariadb-dev
 COPY requirements.txt /usr/src/app/
 RUN pip install -r requirements.txt
 

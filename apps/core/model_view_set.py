@@ -66,7 +66,10 @@ class BaseCreateModelMixin:
 
 class BaseRetrieveModelMixin:
     def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
+        queryset = self.get_queryset()
+        filter_kwargs = {self.lookup_field: self.kwargs[self.lookup_field]}
+        instance = self.repository_class.retrieve(queryset.model, filter_kwargs)
+        self.check_object_permissions(self.request, instance)
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 

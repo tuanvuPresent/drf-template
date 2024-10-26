@@ -1,12 +1,7 @@
-from django.conf.urls import url
-from django.urls import include
 from rest_framework import routers
 
-from apps.authentication.versions.v1.views import auth_view
+from apps.authentication import views
 
 router = routers.DefaultRouter()
-router.register('v1/auth', auth_view.JWTAuthAPIView, basename='auth')
-
-urlpatterns = [
-    url('', include(router.urls)),
-]
+router.register('auth', views.JWTAuthAPIView, basename='auth')
+urlpatterns = router.urls

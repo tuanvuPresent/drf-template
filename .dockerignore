@@ -1,0 +1,7 @@
+.git
+.gitignore
+db.sqlite3
+venv
+Dockerfile
+README.md
+.env

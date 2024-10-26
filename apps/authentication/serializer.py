@@ -1,9 +1,11 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 
-from apps.common.constant import ErrorCode
-from apps.common.custom_exception_handler import CustomAPIException
-from apps.user.models import User
+from apps.core.constant import ErrorMessage
+from apps.core.exception_handler import CustomAPIException
+from django.contrib.auth import get_user_model
+from apps.authentication.utils import JwtTokenGenerator
+User = get_user_model()
 
 
 class JWTLoginSerializer(serializers.Serializer):
@@ -16,15 +18,29 @@ class JWTLoginSerializer(serializers.Serializer):
         password = data.get('password', None)
 
         if not username or not password:
-            raise serializers.ValidationError('password and username field required')
+            raise serializers.ValidationError(
+                'password and username field required')
 
         user = authenticate(username=username, password=password)
         if not user:
-            raise CustomAPIException(ErrorCode.LOGIN_FAIL)
-        return user
+            raise CustomAPIException(ErrorMessage.LOGIN_FAIL)
+
+        token_generator = JwtTokenGenerator()
+        token = token_generator.get_token(user)
+        user.sid = token_generator.jti
+        return {
+            'user': user,
+            'token': token
+        }
 
 
 class UserAccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'user_type']
+
+
+class UserInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'email', 'user_type']
